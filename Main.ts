@@ -1,5 +1,6 @@
 import { Casino } from './Casino';
 import * as readline from 'readline';
+import { Ruleta } from './Ruleta';
 
 const casino = new Casino();
 
@@ -24,7 +25,7 @@ function mostrarMenu(): void {
                 leerInstrucciones();
                 break;
             case "3":
-                jugarJuego();
+                elegirJuego();
                 break;
             case "4":
                 console.log("¡Gracias por visitar el casino!");
@@ -51,28 +52,80 @@ function leerInstrucciones(): void {
             console.log("\n--- INSTRUCCIONES ---");
             console.log(juego.leerInstrucciones());
         }
-        mostrarMenu();
+        mostrarMenu();  
     });
 }
 
-function jugarJuego(): void {
-    casino.mostrarJuegos();
-    rl.question("Ingrese el número del juego que desea jugar: ", (numJuego) => {
-        const juego = casino.elegirJuego(parseInt(numJuego));
-        if (juego) {
-            rl.question(`Ingrese su apuesta (mínimo ${juego.getValorMinimoApuesta()}): `, (apuesta) => {
-                const apuestaNum = parseFloat(apuesta);
-                if (apuestaNum >= juego.getValorMinimoApuesta()) {
-                    casino.jugarJuego(juego, apuestaNum);
-                } else {
-                    console.log(`La apuesta debe ser al menos ${juego.getValorMinimoApuesta()}.`);
-                }
+function elegirJuego(): void {
+    console.log("\n--- SELECCIONAR TIPO DE JUEGO ---");
+    console.log("1. Jugar Tragamonedas");
+    console.log("2. Jugar Ruleta");
+    console.log("3. Volver al menú principal");
+
+    rl.question("Seleccione una opción: ", (opcion) => {
+        switch (opcion) {
+            case "1":
+                jugarTragamonedas();
+                break;
+            case "2":
+                jugarRuleta();
+                break;
+            case "3":
                 mostrarMenu();
-            });
-        } else {
-            mostrarMenu();
+                break;
+            default:
+                console.log("Opción inválida. Intente nuevamente.");
+                elegirJuego();
+                break;
         }
     });
 }
+
+function jugarTragamonedas(): void {
+    console.log("\n--- JUGAR TRAGAMONEDAS ---");
+    casino.mostrarTragamonedas();
+    rl.question("Ingrese el número de la tragamonedas que desea jugar: ", (numJuego) => {
+        const juego = casino.elegirJuego(parseInt(numJuego));
+        if (!juego) {
+            console.log("Número de tragamonedas inválido. Inténtelo de nuevo.");
+            return elegirJuego();
+        }
+
+        rl.question(`Ingrese su apuesta (mínimo ${juego.getValorMinimoApuesta()}): `, (apuesta) => {
+            const apuestaNum = parseFloat(apuesta);
+            casino.jugarJuego(juego, apuestaNum); 
+            elegirJuego();  
+        });
+    });
+}
+
+function jugarRuleta(): void {
+    console.log("\n--- JUGAR RULETA ---");
+    const juego = casino.elegirJuego(3);
+    if (!juego) {
+        console.log("Ocurrió un error al seleccionar la ruleta.");
+        return elegirJuego();
+    }
+
+    rl.question(`Ingrese su apuesta (mínimo ${juego.getValorMinimoApuesta()}): `, (apuesta) => {
+        const apuestaNum = parseFloat(apuesta);
+
+        if (apuestaNum < juego.getValorMinimoApuesta()) {
+            console.log(`La apuesta debe ser al menos ${juego.getValorMinimoApuesta()}.`);
+            return jugarRuleta(); 
+        }
+
+        rl.question('Ingrese el número (del 1 al 36): ', (numero) => {
+            rl.question('Ingrese el color (rojo o negro): ', (color) => {
+                const resultado = juego.jugar(apuestaNum, `${numero.trim()} ${color.trim()}`);
+                console.log(resultado);
+
+                mostrarMenu(); 
+            });
+        });
+    });
+}
+
+
 
 mostrarMenu();

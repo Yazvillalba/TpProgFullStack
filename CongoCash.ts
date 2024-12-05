@@ -1,32 +1,53 @@
 import { Tragamonedas } from "./Tragamonedas";
-import { InstruccionesJuego } from './InstruccionesJuego';
 import * as fs from 'fs';
 
-export class CongoCash extends Tragamonedas implements InstruccionesJuego {
-    private instruccionesPath: string;
+export class CongoCash extends Tragamonedas {
+    private tiradasGratis: number = 0;
+    private totalGanado: number = 0;
 
     constructor() {
-        super("Frutas Slot", 10);
-        this.instruccionesPath = './instrucciones/CongoCash.txt'; 
+        super("Congo Cash", 10, "Tiradas Gratis", "./instrucciones/CongoCash.txt");
+      
     }
 
     jugar(apuesta: number): string {
-        if (apuesta < this.valorMinimoApuesta) {
-            return "La apuesta es menor al valor mínimo permitido.";
+        if (apuesta < this.valorMinimoApuesta && this.tiradasGratis <= 0) {
+            return "La apuesta es menor al valor mínimo permitido y no tienes tiradas gratis.";
         }
-        const resultado = Math.random();
-        if (resultado > 0.5) {
-            const ganancia = apuesta * 2;
-            return `¡Ganaste ${ganancia} en ${this.nombre}!`;
-        }
-        return "¡Perdiste! Mejor suerte la próxima vez.";
+
+        do {
+            let ganancia = 0;
+
+            if (this.tiradasGratis > 0) {
+                this.tiradasGratis--;
+            } else {
+                ganancia -= apuesta;
+            }
+
+            const multiplicador = Math.floor(Math.random() * 5) + 1;
+            ganancia += apuesta * multiplicador;
+            this.totalGanado += ganancia;
+
+            if (ganancia === 300 && this.tiradasGratis === 0) {
+                console.log("¡Ganaste un bono!");
+                this.aplicarBono();
+            }
+
+            console.log(`Ganancia: ${ganancia}, Tiradas gratis restantes: ${this.tiradasGratis}, Total acumulado: ${this.totalGanado}`);
+        } while (this.tiradasGratis > 0);
+
+        return `Total acumulado: ${this.totalGanado}`;
+    }
+
+    aplicarBono(): string {
+        this.tiradasGratis += 5;
+        return "¡Ganaste 5 tiradas gratis!";
     }
 
     leerInstrucciones(): string {
         try {
-            const instrucciones = fs.readFileSync(this.instruccionesPath, 'utf-8');
-            return instrucciones;
-        } catch (error) {
+            return fs.readFileSync(this.instruccionesPath, 'utf-8');
+        } catch {
             return "No se pudieron cargar las instrucciones.";
         }
     }
