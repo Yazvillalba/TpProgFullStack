@@ -1,13 +1,13 @@
 import { Tragamonedas } from "./Tragamonedas";
 import * as fs from 'fs';
-
-export class CongoCash extends Tragamonedas {
+import {InstruccionesJuego }from "./InstruccionesJuego";
+export class CongoCash extends Tragamonedas implements InstruccionesJuego{
     private tiradasGratis: number = 0;
     private totalGanado: number = 0;
-
+    instruccionesPath: string;
     constructor() {
-        super("Congo Cash", 10, "Tiradas Gratis", "./instrucciones/CongoCash.txt");
-      
+        super("Congo Cash", 10, "Tiradas Gratis");
+        this.instruccionesPath = "./instrucciones/CongoCash.txt";
     }
 
     jugar(apuesta: number): string {

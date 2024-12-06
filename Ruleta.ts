@@ -1,10 +1,11 @@
 import * as readlineSync from 'readline-sync';
 import * as fs from 'fs';
+import { InstruccionesJuego } from './InstruccionesJuego';
 
-export class Ruleta {
+export class Ruleta implements InstruccionesJuego{
     private nombre: string;
     private valorMinimoApuesta: number;
-    private instruccionesPath: string;
+     instruccionesPath: string;
     private totalGanado: number;
 
     constructor() {
@@ -51,18 +52,18 @@ export class Ruleta {
             if (numeroElegido === numeroGanador && colorElegido === colorGanador) {
                 ganancia = apuesta * (Math.floor(Math.random() * 3) + 8); 
                 this.totalGanado += ganancia - apuesta;
-                return `¡Felicidades! Ganaste apostando al número ${numeroElegido} y al color ${colorElegido}. Ganaste ${ganancia} unidades.${this.totalGanado >= 0 ? ` Total acumulado: ${this.totalGanado}` : ''}`;
+                return `¡Felicidades! Ganaste apostando al número ${numeroElegido} y al color ${colorElegido}. Ganaste ${ganancia}.${this.totalGanado >= 0 ? ` Total acumulado: ${this.totalGanado}` : ''}`;
             }
             
             else if (numeroElegido === numeroGanador) {
-                ganancia = apuesta * (Math.floor(Math.random() * 3) + 4); 
+                ganancia = apuesta * 35; 
                 this.totalGanado += ganancia - apuesta;
-                return `¡Felicidades! Ganaste apostando al número ${numeroElegido}. Ganaste ${ganancia} unidades.${this.totalGanado >= 0 ? ` Total acumulado: ${this.totalGanado}` : ''}`;
+                return `¡Felicidades! Ganaste apostando al número ${numeroElegido}. Ganaste ${ganancia}.${this.totalGanado >= 0 ? ` Total acumulado: ${this.totalGanado}` : ''}`;
             }
             else if (colorElegido === colorGanador) {
-                ganancia = apuesta * (Math.floor(Math.random() * 3) + 4);
+                ganancia = apuesta * 2;
                 this.totalGanado += ganancia - apuesta;
-                return `¡Felicidades! Ganaste apostando al color ${colorElegido}. Ganaste ${ganancia} unidades.${this.totalGanado >= 0 ? ` Total acumulado: ${this.totalGanado}` : ''}`;
+                return `¡Felicidades! Ganaste apostando al color ${colorElegido}. Ganaste ${ganancia}.${this.totalGanado >= 0 ? ` Total acumulado: ${this.totalGanado}` : ''}`;
             }
         }
 

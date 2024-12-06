@@ -1,12 +1,15 @@
 import { Tragamonedas } from "./Tragamonedas";
 import * as fs from 'fs';
 import * as readlineSync from 'readline-sync';
+import { InstruccionesJuego } from "./InstruccionesJuego";
 
-export class JokersJewels extends Tragamonedas {
+export class JokersJewels extends Tragamonedas implements InstruccionesJuego{
     private totalGanado: number = 0;
+    instruccionesPath: string;
 
     constructor() {
-        super("Jokers Jewels", 20, "Elección de Color", "./instrucciones/JokersJewels.txt");
+        super("Jokers Jewels", 20, "Elección de Color");
+        this.instruccionesPath = "./instrucciones/JokersJewels.txt"
     }
 
     jugar(apuesta: number): string {
@@ -34,9 +37,10 @@ export class JokersJewels extends Tragamonedas {
         if (colorElegido === colorAleatorio) {
             const bono = 300 * (Math.floor(Math.random() * 4) + 5);
             this.totalGanado += bono;
-            return `¡Acertaste el color! Ganaste un bono de ${bono}. Total acumulado: ${this.totalGanado}`;
+            console.log(`¡Acertaste el color! Ganaste un bono de ${bono}. Total acumulado: ${this.totalGanado}`)
+            return "GANASTE";
         } else {
-            return `No acertaste el color. Total acumulado: ${this.totalGanado}`;
+            return `No acertaste el color. Color: ${colorAleatorio}. Total acumulado: ${this.totalGanado}.`;
         }
     }
 
@@ -47,4 +51,5 @@ export class JokersJewels extends Tragamonedas {
             return "No se pudieron cargar las instrucciones.";
         }
     }
+    
 }

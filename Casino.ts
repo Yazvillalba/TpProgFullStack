@@ -1,10 +1,12 @@
 import { JokersJewels } from "./JokersJewels";
 import { CongoCash } from "./CongoCash";
 import { Ruleta } from "./Ruleta";
+import { Dados } from './Dados';
 
 export class Casino {
     private tragamonedas: Array<JokersJewels | CongoCash>;
     private ruleta: Ruleta;
+    private dados: Dados;
 
     constructor() {
         this.tragamonedas = [
@@ -12,7 +14,9 @@ export class Casino {
             new CongoCash(),
         ];
         this.ruleta = new Ruleta();
+        this.dados = new Dados();
     }
+
 
     mostrarJuegos(): void {
         console.log("--- JUEGOS DISPONIBLES ---");
@@ -20,7 +24,9 @@ export class Casino {
             console.log(`${index + 1}. ${juego.getNombre()} (Tragamonedas)`);
         });
         console.log(`${this.tragamonedas.length + 1}. ${this.ruleta.getNombre()} (Ruleta)`);
+        console.log(`${this.tragamonedas.length + 2}. ${this.dados.getNombre()} (Dados)`);
     }
+
     mostrarTragamonedas(): void {
         console.log("---Tragamonedas Disponibles ---");
         this.tragamonedas.forEach((juego, index) => {
@@ -28,12 +34,13 @@ export class Casino {
         });
     
     }
-
-    elegirJuego(numJuego: number): JokersJewels | CongoCash | Ruleta | null {
+    elegirJuego(numJuego: number): JokersJewels | CongoCash | Ruleta | Dados | null {
         if (numJuego <= this.tragamonedas.length) {
             return this.tragamonedas[numJuego - 1];
         } else if (numJuego === this.tragamonedas.length + 1) {
             return this.ruleta;
+        } else if (numJuego === this.tragamonedas.length + 2) {
+            return this.dados;
         }
         console.log("Número de juego inválido.");
         return null;
@@ -47,11 +54,12 @@ export class Casino {
 
         if (juego instanceof Ruleta) {
             this.jugarRuleta(juego, apuesta);
+        } else if (juego instanceof Dados) {
+            this.jugarDados(juego, apuesta);
         } else {
             this.jugarTragamonedas(juego, apuesta);
         }
     }
-
     private jugarRuleta(ruleta: Ruleta, apuesta: number): void {
         const readlineSync = require('readline-sync');
         const eleccion = readlineSync.question("Elige un número (1-36) o un color (rojo/negro): ");
@@ -60,5 +68,10 @@ export class Casino {
 
     private jugarTragamonedas(tragamonedas: any, apuesta: number): void {
         console.log(tragamonedas.jugar(apuesta));
+    }
+    private jugarDados(dados: Dados, apuesta: number): void {
+        const readlineSync = require("readline-sync");
+        const prediccion = readlineSync.question("Ingresa tu predicción de la suma de los dados (2-12): ");
+        console.log(dados.jugar(apuesta, prediccion));
     }
 }

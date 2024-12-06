@@ -1,3 +1,4 @@
 export interface InstruccionesJuego {
-    leerInstrucciones(): string;
+    instruccionesPath: string;
+    leerInstrucciones(): string;    
 }
